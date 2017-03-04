@@ -3,16 +3,39 @@
 
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
+from urllib.parse import urlencode
 from datetime import datetime
 import yaml
 import dropbox
 import os,sys
 import argparse
-import my_secrets
 
-#----------------------------------------------
-dropbox_token = my_secrets.dropbox_api_token
-dropbox_path  = my_secrets.dropbox_path
+#-----CONFIG SECTION START---------------------
+my_secrets = {
+  'dropbox_api_token': None,
+  'dropbox_path': None,
+  'makerchannel_url': None # Leave this as None if you don't want to use IFTTT Maker channel notifications
+}
+# Looks like IFTTT temporarily pulled applet/recipe sharing. When it's back I will link my applet recipe here so you can quickly add it. For now you have to do it manually.
+
+#-----CONFIG SECTION END-----------------------
+
+try:
+  import my_secrets # load credenials from external file if it exists instead
+  dropbox_token = my_secrets.dropbox_api_token
+  dropbox_path = my_secrets.dropbox_path
+  makerchannel_url = my_secrets.makerchannel_url
+  print("Using external secrets file")
+except:
+  dropbox_token = my_secrets['dropbox_api_token']
+  dropbox_path  = my_secrets['dropbox_path']
+  makerchannel_url = my_secrets['makerchannel_url']
+  print("Not using external secrets file")
+
+if not dropbox_token or not dropbox_path:
+  print("Are you sure you configured the script properly?")
+  exit(0)
+
 
 magpi_url     = "https://www.raspberrypi.org/magpi/issues/"
 #target_dir   = "/tmp" # not needed, we're not locally saving the file anymore
@@ -91,6 +114,17 @@ for issue in issues:
     print("      JobID: " + res.get_async_job_id())
     if args.debug:
       print(res)
+
+    if makerchannel_url:
+      try:
+        print("    Sending Maker channel request")
+        mk_data = urlencode({'value1' : title})
+        mk_data = mk_data.encode('ascii')
+        mk_res = urlopen(makerchannel_url, mk_data).read()
+        if args.debug:
+          print(mk_res)
+      except:
+        print("Error sending Maker request")
  
 print("All done!")
  
