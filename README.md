@@ -18,6 +18,8 @@ You will probably want to remove my_secrets imports and definitions and replace 
 ##Schedule:
 Simply add it to your crontab somewhere close to usual MagPi release dates. You might want to use `--log_file --debug` params.
 
+Remember to either edit your credentials in the file itself (see config section) or put them in a separate `my_secrets.py` file
+
 ##Requires:
 
 * Python3
