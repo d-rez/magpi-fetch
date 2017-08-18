@@ -97,7 +97,7 @@ for issue in issues:
   if title not in known_issues.keys():
     known_issues[title] = download_link
     filename = download_link.split('/')[-1]
-    filepath = dropbox_path + "/" + filename
+    filepath = dropbox_path + "/" + title + ".pdf"
 
     # ----
     # This part is only useful if you want to save the file before uploading. Asking Dropbox to fetch the URL is faster and easier and takes a couple of seconds only. You can still use this if you want
